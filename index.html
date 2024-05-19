@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Interactive Image Grid</title>
+    <style>
+      body {
+        background-color: rgb(0, 0, 0); /* transparent */
+      }
+      #container {
+        position: relative;
+        width: 810px;
+        height: 768px;
+        margin: auto;
+        margin-top: 40px;
+      }
+
+      .overlay {
+        position: absolute;
+        width: calc(810px / 100); /* width of each box */
+        height: calc(768px / 100); /* height of each box */
+        background-color: rgba(255, 255, 255, 0); /* transparent */
+        cursor: pointer; /* to indicate it's interactive */
+      }
+
+      #tooltipBox {
+        position: absolute;
+        display: none;
+        width: 70px;
+        background-color: rgba(0, 0, 0, 0.1);
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        z-index: 1000;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <img src="img.jpg" alt="Data Image" style="width: 100%; height: 100%" />
+    </div>
+    <div id="tooltipBox"></div>
+
+    <script>
+      const container = document.getElementById("container");
+      const tooltipBox = document.getElementById("tooltipBox");
+      const paddingTop = 91; // Top padding in pixels
+      const paddingBottom = 69; // Bottom padding in pixels
+      const paddingLeft = 111; // Left padding in pixels
+      const paddingRight = 60; // Right padding in pixels
+      const numBoxes = 100; // Number of boxes in each row and column
+      const containerWidth = 810; // Width of the container
+      const containerHeight = 768; // Height of the container
+
+      // Calculate effective grid width and height considering padding
+      const gridWidth = containerWidth - paddingLeft - paddingRight;
+      const gridHeight = containerHeight - paddingTop - paddingBottom;
+
+      // Calculate the width and height of each box
+      const boxWidth = gridWidth / numBoxes;
+      const boxHeight = gridHeight / numBoxes;
+
+      for (let i = 99; i >= 0; i--) {
+        // Rows start from the bottom to the top
+        for (let j = 0; j < 100; j++) {
+          // Columns start from left to right
+          const overlay = document.createElement("div");
+          overlay.className = "overlay";
+          overlay.style.left = `${paddingLeft + j * boxWidth}px`;
+          overlay.style.top = `${paddingTop + i * boxHeight}px`;
+          overlay.style.width = `${boxWidth}px`;
+          overlay.style.height = `${boxHeight}px`;
+          overlay.style.boxSizing = "border-box"; // Ensures border width doesn't affect box dimensions
+
+          // Set the data text to show 0000 at bottom left and increase rightward and upward
+          const dataText = `${String(99 - i).padStart(2, "0")}${String(
+            j
+          ).padStart(2, "0")}`;
+          overlay.addEventListener("mouseover", function (event) {
+            tooltipBox.style.display = "block";
+            tooltipBox.textContent = dataText;
+            tooltipBox.style.left = `${event.pageX - 36}px`; // Offset to avoid cursor overlap
+            tooltipBox.style.top = `${event.pageY - 35}px`;
+            this.style.border = "1px solid black"; // Adds a black stroke on hover
+          });
+          overlay.addEventListener("mouseout", function () {
+            tooltipBox.style.display = "none";
+            this.style.border = "none"; // Removes the stroke when not hovered
+          });
+
+          container.appendChild(overlay);
+        }
+      }
+    </script>
+  </body>
+</html>
